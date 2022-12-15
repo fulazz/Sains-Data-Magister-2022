@@ -1,0 +1,141 @@
+---
+title: "UAS Data Sains"
+author: "Tahira Fulazzaky"
+date: "2022-12-15"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+library(caret)
+library(pROC)
+library(e1071)
+library(ggplot2)
+```
+
+```{r}
+data_cancer<-readxl::read_xlsx("D:/4. Magister - Data Science IPB/Semester 1/Data Sains/UAS 2022 Tahira/Cancer vs AP_Xray_Stage_Grade_Age.xlsx")
+data_cancer<-as.data.frame(data_cancer)
+head(data_cancer)
+```
+
+```{r}
+str(data_cancer)
+```
+
+```{r}
+set.seed(98)
+angka_acak<-sample(1:300,size=200,replace=F)
+list(awal=head(angka_acak,n=3),akhir=tail(angka_acak,n=3))
+```
+
+```{r}
+data_cancer_sample<-data_cancer[angka_acak,]
+head(data_cancer_sample,n=3)
+```
+
+```{r}
+tail(data_cancer_sample,n=3)
+```
+
+```{r}
+set.seed(98)
+kelas0<-subset(data_cancer_sample,data_cancer_sample$Y==0)
+kelas1<-subset(data_cancer_sample,data_cancer_sample$Y==1)
+k0_p<-sample(1:nrow(kelas0), size = round(0.8*nrow(kelas0)), replace=FALSE)
+k1_p<-sample(1:nrow(kelas1), size = round(0.8*nrow(kelas1)), replace=FALSE)
+latih<-rbind(kelas0[k0_p,],kelas1[k1_p,])
+uji<-rbind(kelas0[-k0_p,],kelas1[-k1_p,])
+f_data_asli<-as.vector(table(data_cancer_sample$Y))
+f_data_latih<-as.vector(table(latih$Y))
+f_data_uji<-as.vector(table(uji$Y))
+nama_data<-c("Data Asli","Data Latih","Data Uji")
+partisi_data<-data.frame(nama_data,rbind(f_data_asli,f_data_latih,f_data_uji))
+rownames(partisi_data)<-NULL
+colnames(partisi_data)<-c("Data","Kelas_0","Kelas_1")
+partisi_data
+```
+
+```{r}
+model_logistik<-glm(Y~.,data=latih)
+summary(model_logistik)
+```
+```{r}
+p<-predict(model_logistik,newdata=latih,type="response")
+pred<-as.factor(ifelse(p<0.5,0,1))
+aktual=as.factor(latih$Y)
+confusionMatrix(aktual,pred,positive = "1")
+```
+```{r}
+p<-predict(model_logistik,newdata=uji,type="response")
+pred_log<-as.factor(ifelse(p<0.5,0,1))
+aktual<-as.factor(uji$Y)
+confusionMatrix(aktual,pred_log,positive = "1")
+```
+```{r}
+roc_pk<-roc(pred_log~uji$Y,plot=TRUE,col="violetred3",lwd=3,legacy.axes=TRUE,main="ROC Curves",asp=NA,print.auc=T,print.auc.y=0.60)
+legend("bottom",
+       legend=c("Regresi Logistik"),
+       col=c("violetred3"),
+       lwd=4, cex =0.6, xpd = TRUE, horiz = TRUE)
+```
+
+```{r}
+model_nb = naiveBayes(as.factor(Y) ~., data = latih)
+model_nb
+```
+
+```{r}
+pred_nb<-as.factor(predict(model_nb,newdata=latih))
+aktual<-as.factor(latih$Y)
+confusionMatrix(aktual,pred_nb,positive = "1")
+```
+
+```{r}
+pred_nb<-as.factor(predict(model_nb,newdata=uji))
+aktual<-as.factor(uji$Y)
+confusionMatrix(aktual,pred_nb,positive = "1")
+```
+
+```{r}
+roc_pk<-roc(pred_nb~uji$Y,plot=TRUE,col="violetred3",lwd=3,legacy.axes=TRUE,main="ROC Curves",asp=NA,print.auc=T,print.auc.y=0.60)
+legend("bottom",
+       legend=c("Naive Bayes"),
+       col=c("violetred3"),
+       lwd=4, cex =0.6, xpd = TRUE, horiz = TRUE)
+```
+
+```{r}
+#Logistic
+p_logistik<-predict(model_logistik,newdata=uji,type="response")
+pred_log<-as.factor(ifelse(p_logistik<0.5,0,1))
+aktual<-as.factor(uji$Y)
+cm_log<-confusionMatrix(aktual,pred_log,positive = "1")
+nilai_log<-c(cm_log$overall[1],cm_log$byClass[c(1,2,11)])
+#Naive Bayes
+pred_nb<-as.factor(predict(model_nb,newdata=uji))
+cm_nb<-confusionMatrix(aktual,pred_nb,positive = "1")
+nilai_nb<-c(cm_nb$overall[1],cm_nb$byClass[c(1,2,11)])
+performa=c("Akurasi","Sensitivitas","Spesifisitas","AUC")
+metode=c("Regresi Logistik","Naive Bayes")
+perbandingan<-data.frame(Metode=rep(metode,1,each=4),Performa=rep(performa,2),Nilai=round(c(nilai_log,nilai_nb),4)*100)
+perbandingan
+```
+
+```{r}
+ggplot(data=perbandingan, aes(x=Performa, y=Nilai, fill=Metode)) + 
+     geom_bar(position = 'dodge', stat='identity') +
+     geom_text(aes(label=Nilai), position=position_dodge(width=0.9), vjust=-0.25,cex=3)
+```
+
+```{r}
+roc_pk<-roc(pred_log~uji$Y,plot=TRUE,col="violetred3",lwd=3,legacy.axes=TRUE,main="ROC Curves",asp=NA,print.auc=T,print.auc.y=0.60)
+roc_pk<-roc(pred_nb~uji$Y,plot=TRUE,col="salmon",lwd=3,legacy.axes=TRUE,main="ROC Curves",asp=NA,add=TRUE,print.auc=T,print.auc.y=0.52)
+legend("bottom",
+       legend=c("Regresi Logistik","Naive Bayes"),
+       col=c("violetred3","salmon"),
+       lwd=4, cex =0.6, xpd = TRUE, horiz = TRUE)
+```
+
+
