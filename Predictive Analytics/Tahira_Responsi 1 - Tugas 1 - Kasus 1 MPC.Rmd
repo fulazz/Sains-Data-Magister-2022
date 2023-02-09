@@ -1,0 +1,371 @@
+---
+title: "Metode Penarikan Contoh - Responsi 1"
+author: "Tahira Fulazzaky"
+NIM : "G1501221024"
+date: "2023-02-03"
+output: html_document
+---
+
+
+
+# **Kasus 1**
+
+#### 1. Bangkitkan data y sebanyak N=500 amatan dengan y~N(100,25). Dari data yang dibangkitkan, kemudian hitung rata-rata dan ragamnya.
+
+##### Membangkitkan data y sebanyak N=500 amatan dengan y~N(100,25)
+```{r}
+set.seed(1024)
+observe_Y_norm <- rnorm(500,mean=100,sd=5)
+observe_Y_norm
+```
+##### Menghitung rata-rata data Y dari N dengan sebaran Normal
+```{r}
+mean_Y_norm = mean(observe_Y_norm)
+mean_Y_norm
+```
+##### Menghitung ragam data Y dari N dengan sebaran Normal
+```{r}
+var_Y_norm = var(observe_Y_norm)
+var_Y_norm
+```
+
+##### Visualisasi sebaran bangkitan data Y dengan distribusi Normal
+```{r}
+hist(observe_Y_norm, xlim=range(80:115), main = "Histogram Simulasi Data Y~Normal(100,25)", col = "azure", freq = FALSE, ylim =c (0,0.075))
+abline(v=mean(observe_Y_norm),lty=2, lwd=3, col="blue")
+curve(dnorm(x, mean=mean(observe_Y_norm),sd=sd(observe_Y_norm)), add=TRUE, col="red")
+```
+
+#### 2. Ambil sampel sebanyak masing-masing 5, 10 dan 30. Kemudian hitunglah rata-rata dan ragamnya.
+##### Mengambil sampel sebanyak 5, menghitung rata-rata dan ragamnya
+```{r}
+# untuk n = 5
+set.seed(125)
+sample_obs_norm5 <- sample(observe_Y_norm,5)
+sample_obs_norm5
+
+# rata-rata untuk n = 5
+mean_obs_norm5 <- mean(sample_obs_norm5)
+mean_obs_norm5
+
+# ragam untuk n = 5
+var_obs_norm5 <-var(sample_obs_norm5)
+var_obs_norm5
+```
+
+##### Mengambil sampel sebanyak 10, menghitung rata-rata dan ragamnya
+```{r}
+# untuk n = 10
+set.seed(257)
+sample_obs_norm10 <- sample(observe_Y_norm,10)
+sample_obs_norm10
+
+# rata-rata untuk n = 10
+mean_obs_norm10 <- mean(sample_obs_norm10)
+mean_obs_norm10
+
+# ragam untuk n = 10
+var_obs_norm10 <-var(sample_obs_norm10)
+var_obs_norm10
+
+```
+
+##### Mengambil sampek sebanyak 30, menghitung rata-rata dan ragamnya
+```{r}
+# untuk n = 30
+set.seed(712)
+sample_obs_norm30 <- sample(observe_Y_norm,30)
+sample_obs_norm30
+
+# rata-rata untuk n = 30
+mean_obs_norm30 <- mean(sample_obs_norm30)
+mean_obs_norm30
+
+# ragam untuk n = 30
+var_obs_norm30 <-var(sample_obs_norm30)
+var_obs_norm30
+
+```
+
+#### 3. Ulangi pengambilan sampel masing-masing sebanyak 100 kali, kemudian periksa sebaran dari rata-ratanya. Apakah menyebar normal ? Bagaimana kesimpulan Anda?
+
+##### Pengambilan sampel dengan ulangan 100 kali untuk n = 5
+```{r}
+# Sampling dengan ulangan 100 kali pada n = 5
+iterasi <- 100
+n <- 5
+
+means_obs_5 <- rep(NA, iterasi)
+
+set.seed(125)
+for (i in 1:iterasi){
+  dtn5 <- sample(observe_Y_norm, n)
+  means_obs_5[i] <- mean(dtn5)
+}
+means_obs_5
+```
+
+```{r}
+hist(means_obs_5, xlim=range(92:106), main = "Histogram Rata-Rata y~Normal n=5 Ulangan 100x", col = "cornsilk", freq = FALSE, ylim =c (0,0.16))
+abline(v=mean(observe_Y_norm),lty=2, lwd=3, col="blue")
+abline(v=mean(means_obs_5), lty=2, lwd=3, col="green")
+curve(dnorm(x, mean=mean(means_obs_5),sd=sd(means_obs_5)), add=TRUE, col="red")
+
+```
+```{r}
+# Uji Normalitas
+library(nortest)
+nortest::lillie.test(means_obs_5)
+
+mean(means_obs_5)
+```
+
+```{r}
+var(means_obs_5)
+```
+
+#### Pengambilan sampel dengan ulangan 100 kali untuk n = 10
+```{r}
+# Sampling dengan ulangan 100 kali pada n = 10
+iterasi <- 100
+n <- 10
+
+means_obs_10 <- rep(NA, iterasi)
+
+set.seed(257)
+for (i in 1:iterasi){
+  dtn10 <- sample(observe_Y_norm, n)
+  means_obs_10[i] <- mean(dtn10)
+}
+means_obs_10
+```
+```{r}
+hist(means_obs_10, xlim=range(95:104), main = "Histogram Rata-Rata y~Normal n=10 Ulangan 100x", col = "bisque", freq = FALSE, ylim =c (0,0.24))
+abline(v=mean(observe_Y_norm),lty=2, lwd=3, col="blue")
+abline(v=mean(means_obs_10), lty=2, lwd=3, col="green")
+curve(dnorm(x, mean=mean(means_obs_10),sd=sd(means_obs_10)), add=TRUE, col="red")
+
+```
+```{r}
+# Uji Normalitas
+library(nortest)
+nortest::lillie.test(means_obs_10)
+
+mean(means_obs_10)
+```
+
+```{r}
+var(means_obs_10)
+```
+
+#### Pengambilan sampel dengan ulangan 100 kali untuk n = 30
+```{r}
+# Sampling dengan ulangan 100 kali pada n = 30
+iterasi <- 100
+n <- 30
+
+means_obs_30 <- rep(NA, iterasi)
+
+set.seed(712)
+for (i in 1:iterasi){
+  dtn30 <- sample(observe_Y_norm, n)
+  means_obs_30[i] <- mean(dtn30)
+}
+means_obs_30
+```
+```{r}
+hist(means_obs_30, xlim=range(97:102), main = "Histogram Rata-Rata y~Normal n=30 Ulangan 100x", col = "burlywood", freq = FALSE, ylim =c (0,0.4))
+abline(v=mean(observe_Y_norm),lty=1, lwd=3, col="blue")
+abline(v=mean(means_obs_30), lty=2, lwd=5, col="green")
+curve(dnorm(x, mean=mean(means_obs_30),sd=sd(means_obs_30)), add=TRUE, col="red")
+
+```
+```{r}
+# Uji Normalitas
+library(nortest)
+nortest::lillie.test(means_obs_30)
+
+mean(means_obs_30)
+```
+```{r}
+var(means_obs_30)
+```
+
+#### 4. Ulangi langkah 1-3 untuk y~Gamma(4,2). Bagaimana kesimpulan Anda ?
+
+##### Membangkitkan data y sebanyak N=500 amatan dengan y~Gamma (4,2)
+```{r}
+set.seed(1024)
+observe_Y_gamma <- rgamma(n=500,shape=4,rate = 1/2)
+observe_Y_gamma
+```
+##### Menghitung rata-rata data Y dari N dengan sebaran gamma
+```{r}
+mean_Y_gamma = mean(observe_Y_gamma)
+mean_Y_gamma
+```
+
+##### Menghitung ragam data Y dari N dengan sebaran gamma
+```{r}
+var_Y_gamma = var(observe_Y_gamma)
+var_Y_gamma
+```
+##### Visualisasi sebaran bangkitan data Y dengan distribusi Gamma
+```{r}
+hist(observe_Y_gamma, xlim=range(0:28), main = "Histogram Simulasi Data Y Gamma", col = "azure", freq = FALSE, ylim =c (0,0.11))
+abline(v=mean(observe_Y_gamma),lty=2, lwd=3, col="blue")
+curve(dnorm(x, mean=mean(observe_Y_gamma),sd=sd(observe_Y_gamma)), add=TRUE, col="red")
+
+```
+
+##### Mengambil sampel sebanyak 5 dari sebaran gamma, menghitung rata-rata dan ragamnya
+```{r}
+# untuk n = 5
+set.seed(125)
+sample_obs_gamma5 <- sample(observe_Y_gamma,5)
+sample_obs_gamma5
+
+# rata-rata untuk n = 5
+mean_obs_gamma5 <- mean(sample_obs_gamma5)
+mean_obs_gamma5
+
+# ragam untuk n = 5
+var_obs_gamma5 <-var(sample_obs_gamma5)
+var_obs_gamma5
+```
+##### Mengambil sampel sebanyak 10 dari sebaran gamma, menghitung rata-rata dan ragamnya
+```{r}
+# untuk n = 10
+set.seed(257)
+sample_obs_gamma10 <- sample(observe_Y_gamma,10)
+sample_obs_gamma10
+
+# rata-rata untuk n = 10
+mean_obs_gamma10 <- mean(sample_obs_gamma10)
+mean_obs_gamma10
+
+# ragam untuk n = 10
+var_obs_gamma10 <-var(sample_obs_gamma10)
+var_obs_gamma10
+```
+
+##### Mengambil sampel sebanyak 30 dari sebaran gamma, menghitung rata-rata dan ragamnya
+```{r}
+# untuk n = 30
+set.seed(712)
+sample_obs_gamma30 <- sample(observe_Y_gamma,30)
+sample_obs_gamma30
+
+# rata-rata untuk n = 30
+mean_obs_gamma30 <- mean(sample_obs_gamma30)
+mean_obs_gamma30
+
+# ragam untuk n = 30
+var_obs_gamma30 <-var(sample_obs_gamma30)
+var_obs_gamma30
+```
+
+##### Pengambilan sampel dengan ulangan 100 kali untuk n = 5 dengan sebaran gamma
+```{r}
+# Sampling dengan ulangan 100 kali pada n = 5 dengan sebaran gamma
+iterasi <- 100
+n <- 5
+
+means_gamma_5 <- rep(NA, iterasi)
+
+set.seed(125)
+for (i in 1:iterasi){
+  dtg5 <- sample(observe_Y_gamma, n)
+  means_gamma_5[i] <- mean(dtg5)
+}
+means_gamma_5
+```
+
+```{r}
+hist(means_gamma_5,xlim = range(3,13), main = "Histogram Rata-Rata y~Gamma n=5 Ulangan 100x", col = "cornsilk", freq = FALSE, ylim = c(0,0.25) )
+abline(v=mean(observe_Y_gamma),lty=2, lwd=3, col="blue", xlim = c())
+abline(v=mean(means_gamma_5), lty=2, lwd=3, col="green")
+curve(dnorm(x, mean=mean(means_gamma_5),sd=sd(means_gamma_5)), add=TRUE, col="red")
+
+```
+
+```{r}
+# Uji Normalitas
+library(nortest)
+nortest::lillie.test(means_gamma_5)
+
+mean(means_gamma_5)
+```
+
+```{r}
+var(means_gamma_5)
+```
+
+#### Pengambilan sampel dengan ulangan 100 kali untuk n = 10
+```{r}
+# Sampling dengan ulangan 100 kali pada n = 10
+iterasi <- 100
+n <- 10
+
+means_gamma_10 <- rep(NA, iterasi)
+
+set.seed(257)
+for (i in 1:iterasi){
+  dtg10 <- sample(observe_Y_gamma, n)
+  means_gamma_10[i] <- mean(dtg10)
+}
+means_gamma_10
+```
+
+```{r}
+hist(means_gamma_10, xlim=range(5:12), main = "Histogram Rata-Rata y~Gamma n=10 Ulangan 100x", col = "bisque", freq = FALSE, ylim =c (0,0.3))
+abline(v=mean(observe_Y_gamma),lty=2, lwd=3, col="blue")
+abline(v=mean(means_gamma_10), lty=2, lwd=3, col="green")
+curve(dnorm(x, mean=mean(means_gamma_10),sd=sd(means_gamma_10)), add=TRUE, col="red")
+```
+
+```{r}
+# Uji Normalitas
+library(nortest)
+nortest::lillie.test(means_gamma_10)
+
+mean(means_gamma_10)
+```
+
+```{r}
+var(means_gamma_10)
+```
+
+#### Pengambilan sampel dengan ulangan 100 kali untuk n = 30
+```{r}
+# Sampling dengan ulangan 100 kali pada n = 30
+iterasi <- 100
+n <- 30
+
+means_gamma_30 <- rep(NA, iterasi)
+
+set.seed(712)
+for (i in 1:iterasi){
+  dtg30 <- sample(observe_Y_gamma, n)
+  means_gamma_30[i] <- mean(dtg30)
+}
+means_gamma_30
+```
+
+```{r}
+hist(means_gamma_30, xlim=range(6.5:10), main = "Histogram Rata-Rata y~Gamma n=30 Ulangan 100x", col = "burlywood", freq = FALSE, ylim =c (0,0.6))
+abline(v=mean(observe_Y_gamma),lty=2, lwd=3, col="blue")
+abline(v=mean(means_gamma_30), lty=2, lwd=3, col="green")
+curve(dnorm(x, mean=mean(means_gamma_30),sd=sd(means_gamma_30)), add=TRUE, col="red")
+```
+
+```{r}
+# Uji Normalitas
+library(nortest)
+nortest::lillie.test(means_obs_30)
+
+mean(means_gamma_30)
+```
+```{r}
+var(means_gamma_30)
+```

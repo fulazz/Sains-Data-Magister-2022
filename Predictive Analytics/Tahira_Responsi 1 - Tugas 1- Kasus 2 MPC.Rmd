@@ -1,0 +1,210 @@
+---
+title: "Tahira_Responsi 1 - Tugas 2"
+author: "Tahira Fulazzaky"
+date: "2023-02-08"
+output: html_document
+---
+
+
+# **Kasus 2**
+
+#### 1. Bangkitkan data populasi y sebanyak N=500 yang terdiri dari 3 strata masing-masing N1=300, N2=150 dan N3=50 dengan y1~N(100,16), y2~N(500,25), dan y3~N(1000,36). Hitunglah rata-rata dan ragam populasi.
+
+##### Membangkitkan data populasi y
+```{r}
+# N1 = 300
+set.seed(125)
+popul.N1 <- rnorm(n=300, mean=100, sd=4)
+popul.N1
+
+mean(popul.N1)
+
+var(popul.N1)
+```
+
+```{r}
+# N2 = 150
+set.seed(257)
+popul.N2 <- rnorm(n=150, mean=500, sd=5)
+popul.N2
+
+mean(popul.N2)
+
+var(popul.N2)
+```
+
+```{r}
+# N3 = 50
+set.seed(712)
+popul.N3 <- rnorm(n=50, mean=1000, sd=6)
+popul.N3
+
+mean(popul.N3)
+
+var(popul.N3)
+```
+##### Menghitung Data Populasi
+```{r}
+# Data Populasi
+popul.tot <- c(popul.N1,popul.N2,popul.N3)
+popul.tot
+```
+
+##### Menghitung Rata-Rata Populasi
+```{r}
+# Rata-Rata Populasi
+mean(popul.tot)
+```
+
+##### Menghitung Ragam Populasi
+```{r}
+# Ragam Populasi
+var(popul.tot)
+```
+
+
+#### 2. Ambil sampel secara acak sederhana sebanyak 30 dari populasi tersebut, kemudian hitung rata-rata dan ragamnya.
+
+##### Mengambil sampel secara acak, dari populasi tersebut
+```{r}
+set.seed(1024)
+sampel.popul30 <- sample(popul.tot,30)
+sampel.popul30
+```
+
+##### Menghitung rata-rata dari 30 sampel populasi
+```{r}
+mean(sampel.popul30)
+```
+
+##### Menghitung ragam dari 30 sampel populasi
+```{r}
+var(sampel.popul30)
+```
+
+#### 3.Ambil sampel masing-masing sebanyak n1=10, n2=10 dan n3=10, kemudian hitung rata-rata dan ragam masing-masing strata dan keseluruhan
+
+##### Mengambil sampel masing-masing strata dengan jumlah yang sama, menghitung rata-rata dan ragam masing-masing strata
+```{r}
+# Sampel Strata 1
+set.seed(125)
+sampel.strata.N1 <- sample(popul.N1,10)
+sampel.strata.N1
+
+## Rata-rata Sampel Strata 1
+mean.sampel.N1 <- mean(sampel.strata.N1)
+mean.sampel.N1
+
+## Ragam Sampel Strata 1
+var.sampel.N1 <- var(sampel.strata.N1)
+var.sampel.N1
+
+#Sampel Strata 2
+set.seed(257)
+sampel.strata.N2 <- sample(popul.N2,10)
+sampel.strata.N2
+
+## Rata-rata Sampel Strata 2
+mean.sampel.N2 <- mean(sampel.strata.N2)
+mean.sampel.N2
+
+## Ragam Sampel Strata 2
+var.sampel.N2 <- var(sampel.strata.N2)
+var.sampel.N2
+
+#Sampel Strata 3
+set.seed(712)
+sampel.strata.N3 <- sample(popul.N3,10)
+sampel.strata.N3
+
+## Rata-rata Sampel Strata 3
+mean.sampel.N3 <- mean(sampel.strata.N3)
+mean.sampel.N3
+
+## Ragam Sampel Starata 3
+var.sampel.N3 <- var(sampel.strata.N3)
+var.sampel.N3
+```
+##### Meenghitung rata-rata dan ragam dari keseluruhan strata
+```{r}
+#Rata-rata
+ratata.strata <- 1/500*((300*mean.sampel.N1)+(150*mean.sampel.N2)+(50*mean.sampel.N3))
+ratata.strata
+
+#Ragam
+ragam.strata1 <- (300*(300-10)*(var.sampel.N1/10))
+ragam.strata1
+
+ragam.strata2 <- (150*(150-10)*(var.sampel.N2/10))
+ragam.strata2
+
+ragam.strata3 <- (50*(50-10)*(var.sampel.N3/10))
+ragam.strata3
+
+ragam.tot.strata <- 1/(500^2)*(ragam.strata1+ragam.strata2+ragam.strata3)
+ragam.tot.strata
+
+```
+
+#### 4. Ambil sampel masing-masing sebanyak n1=12, n2=6 dan n3=2 dengan simple random sampling, kemudian hitung rata-rata dan ragam masing-masing strata dan keseluruhan. 
+```{r}
+# Sampel Strata Poporsional 1
+set.seed(125)
+srs.prop.N1 <- sample(popul.N1,12)
+srs.prop.N1
+
+## Rata-rata Sampel Strata Proporsional 1
+mean.prop.N1 <- mean(srs.prop.N1)
+mean.prop.N1
+
+## Ragam Sampel Strata Proporsional  1
+var.prop.N1 <- var(srs.prop.N1)
+var.prop.N1
+
+#Sampel Strata Proporsional 2
+set.seed(257)
+srs.prop.N2 <- sample(popul.N2,6)
+srs.prop.N2
+
+## Rata-rata Sampel Strata Proporsional  2
+mean.prop.N2 <- mean(srs.prop.N2)
+mean.prop.N2
+
+## Ragam Sampel Strata Proporsional  2
+var.prop.N2 <- var(srs.prop.N2)
+var.prop.N2
+
+#Sampel Strata 3
+set.seed(712)
+srs.prop.N3 <- sample(popul.N3,2)
+srs.prop.N3
+
+## Rata-rata Sampel Strata 3
+mean.prop.N3 <- mean(srs.prop.N3)
+mean.prop.N3
+
+## Ragam Sampel Starata 3
+var.prop.N3 <- var(srs.prop.N3)
+var.prop.N3
+```
+
+##### Meenghitung rata-rata dan ragam dari keseluruhan strata sampel proporsional
+```{r}
+#Rata-rata
+ratata.prop.srs <- 1/500*((300*mean.prop.N1)+(150*mean.prop.N2)+(50*mean.prop.N3))
+ratata.prop.srs
+
+#Ragam
+ragam.prop.strata1 <- (300*(300-10)*(var.prop.N1/10))
+ragam.prop.strata1
+
+ragam.prop.strata2 <- (150*(150-10)*(var.prop.N2/10))
+ragam.prop.strata2
+
+ragam.prop.strata3 <- (50*(50-10)*(var.prop.N3/10))
+ragam.prop.strata3
+
+ragam.tot.strata.prop <- 1/(500^2)*(ragam.prop.strata1+ragam.prop.strata2+ragam.prop.strata3)
+ragam.tot.strata.prop
+
+```
