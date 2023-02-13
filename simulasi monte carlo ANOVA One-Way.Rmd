@@ -1,0 +1,234 @@
+---
+title: "Simulasi Monte Carlo One Way ANOVA"
+author: "Tahira Fulazzaky"
+date: "2023-02-13"
+output: html_document
+---
+
+```{r}
+#Skenario A
+repetition <-1000
+p_value_bartlett <- NULL
+p_value_anova <-NULL
+p_value_breuschpagan <-NULL
+set.seed(125)
+for(i in seq(repetition)){
+  N1 <-rnorm(10,mean=20,sd=1)
+  N2 <-rnorm(10,mean=20,sd=1)
+  N3 <-rnorm(10,mean=20,sd=1)
+  Category_1st <-rep("C1",length(N1))
+  Category_2nd <-rep("C2",length(N2))
+  Category_3rd <-rep("C3",length(N3))
+  Data_ANOVA <-data.frame(Value = c(N1,N2,N3),Group = c(Category_1st,Category_2nd,Category_3rd))
+  Homogenity <- bartlett.test(Value ~ Group, data = Data_ANOVA)
+  Results_ANOVA <- aov(Value ~ Group, data = Data_ANOVA)
+  Homogenity_breuschpagan <-lmtest::bptest(Results_ANOVA)
+  p_value_bartlett<-rbind(p_value_bartlett,Homogenity$p.value)
+  p_value_anova<-rbind(p_value_anova,summary(Results_ANOVA)[[1]][["Pr(>F)"]][1])
+  p_value_breuschpagan<-rbind(p_value_breuschpagan,Homogenity_breuschpagan$p.value)
+}
+```
+
+```{r}
+head(p_value_bartlett,n=10)
+head(p_value_anova,n=10)
+head(p_value_breuschpagan,n=10)
+```
+
+```{r}
+data_simulation_A <- data.frame(p_value_anova,
+            p_value_breuschpagan)
+```
+
+```{r}
+hist(p_value_breuschpagan, col = "pink")
+hist(p_value_anova, col = "lightblue")
+sig<-ifelse(p_value_breuschpagan>0.05,"Homogen","Non-Homogen")
+table(sig)
+sig<-ifelse(p_value_anova<0.05,"Significant","Not-Significant")
+table(sig)
+```
+
+
+```{r}
+d_breuschpagan <- density(p_value_breuschpagan)
+plot(d_breuschpagan, main="Distribution of P-Value Breusch Pagan")
+polygon(d_breuschpagan, col="pink", border="red")
+```
+```{r}
+d_anova <- density(p_value_anova)
+plot(d_anova, main="Distribution of P-Value ANOVA")
+polygon(d_anova, col="lightblue", border="blue")
+
+```
+
+
+```{r}
+#Skenario B
+repetition <-1000
+p_value_bartlett <- NULL
+p_value_anova <-NULL
+p_value_breuschpagan <-NULL
+set.seed(257)
+for(i in seq(repetition)){
+  N1 <-rnorm(10,mean=20,sd=1)
+  N2 <-rnorm(10,mean=20,sd=6)
+  N3 <-rnorm(10,mean=20,sd=10)
+  Category_1st <-rep("C1",length(N1))
+  Category_2nd <-rep("C2",length(N2))
+  Category_3rd <-rep("C3",length(N3))
+  Data_ANOVA <-data.frame(Value = c(N1,N2,N3),Group = c(Category_1st,Category_2nd,Category_3rd))
+  Homogenity <- bartlett.test(Value ~ Group, data = Data_ANOVA)
+  Results_ANOVA <- aov(Value ~ Group, data = Data_ANOVA)
+  Homogenity_breuschpagan <-lmtest::bptest(Results_ANOVA)
+  p_value_bartlett<-rbind(p_value_bartlett,Homogenity$p.value)
+  p_value_anova<-rbind(p_value_anova,summary(Results_ANOVA)[[1]][["Pr(>F)"]][1])
+  p_value_breuschpagan<-rbind(p_value_breuschpagan,Homogenity_breuschpagan$p.value)
+}
+```
+
+```{r}
+head(p_value_bartlett,n=10)
+head(p_value_anova,n=10)
+head(p_value_breuschpagan,n=10)
+```
+
+```{r}
+data_simulation_A <- data.frame(p_value_anova,
+            p_value_breuschpagan)
+```
+
+```{r}
+hist(p_value_breuschpagan, col = "pink")
+hist(p_value_anova, col = "lightblue")
+sig<-ifelse(p_value_breuschpagan>0.05,"Homogen","Non-Homogen")
+table(sig)
+sig<-ifelse(p_value_anova<0.05,"Significant","Not-Significant")
+table(sig)
+```
+
+```{r}
+d_breuschpagan <- density(p_value_breuschpagan)
+plot(d_breuschpagan, main="Distribution of P-Value Breusch Pagan", ylim =c (0,18))
+polygon(d_breuschpagan, col="pink", border="red")
+
+```
+```{r}
+d_anova <- density(p_value_anova)
+plot(d_anova, main="Distribution of P-Value ANOVA")
+polygon(d_anova, col="lightblue", border="blue")
+
+```
+
+```{r}
+#Skenario C
+repetition <-1000
+p_value_bartlett <- NULL
+p_value_anova <-NULL
+p_value_breuschpagan <-NULL
+set.seed(571)
+for(i in seq(repetition)){
+  N1 <-rnorm(10,mean=20,sd=1)
+  N2 <-rnorm(10,mean=24,sd=1)
+  N3 <-rnorm(10,mean=28,sd=1)
+  Category_1st <-rep("C1",length(N1))
+  Category_2nd <-rep("C2",length(N2))
+  Category_3rd <-rep("C3",length(N3))
+  Data_ANOVA <-data.frame(Value = c(N1,N2,N3),Group = c(Category_1st,Category_2nd,Category_3rd))
+  Homogenity <- bartlett.test(Value ~ Group, data = Data_ANOVA)
+  Results_ANOVA <- aov(Value ~ Group, data = Data_ANOVA)
+  Homogenity_breuschpagan <-lmtest::bptest(Results_ANOVA)
+  p_value_bartlett<-rbind(p_value_bartlett,Homogenity$p.value)
+  p_value_anova<-rbind(p_value_anova,summary(Results_ANOVA)[[1]][["Pr(>F)"]][1])
+  p_value_breuschpagan<-rbind(p_value_breuschpagan,Homogenity_breuschpagan$p.value)
+}
+```
+
+```{r}
+head(p_value_bartlett,n=10)
+head(p_value_anova,n=10)
+head(p_value_breuschpagan,n=10)
+```
+
+```{r}
+data_simulation_A <- data.frame(p_value_anova,
+            p_value_breuschpagan)
+```
+
+```{r}
+hist(p_value_breuschpagan, col = "pink")
+hist(p_value_anova, col = "lightblue")
+sig<-ifelse(p_value_breuschpagan>0.05,"Homogen","Non-Homogen")
+table(sig)
+sig<-ifelse(p_value_anova<0.05,"Significant","Not-Significant")
+table(sig)
+```
+
+```{r}
+d_breuschpagan <- density(p_value_breuschpagan)
+plot(d_breuschpagan, main="Distribution of P-Value Breusch Pagan", ylim =c (0,1.3))
+polygon(d_breuschpagan, col="pink", border="red")
+
+```
+```{r}
+d_anova <- density(p_value_anova)
+plot(d_anova, main="Distribution of P-Value ANOVA")
+polygon(d_anova, col="lightblue", border="blue")
+
+```
+```{r}
+#Skenario D
+repetition <-1000
+p_value_bartlett <- NULL
+p_value_anova <-NULL
+p_value_breuschpagan <-NULL
+set.seed(571)
+for(i in seq(repetition)){
+  N1 <-rnorm(10,mean=20,sd=1)
+  N2 <-rnorm(10,mean=24,sd=6)
+  N3 <-rnorm(10,mean=28,sd=10)
+  Category_1st <-rep("C1",length(N1))
+  Category_2nd <-rep("C2",length(N2))
+  Category_3rd <-rep("C3",length(N3))
+  Data_ANOVA <-data.frame(Value = c(N1,N2,N3),Group = c(Category_1st,Category_2nd,Category_3rd))
+  Homogenity <- bartlett.test(Value ~ Group, data = Data_ANOVA)
+  Results_ANOVA <- aov(Value ~ Group, data = Data_ANOVA)
+  Homogenity_breuschpagan <-lmtest::bptest(Results_ANOVA)
+  p_value_bartlett<-rbind(p_value_bartlett,Homogenity$p.value)
+  p_value_anova<-rbind(p_value_anova,summary(Results_ANOVA)[[1]][["Pr(>F)"]][1])
+  p_value_breuschpagan<-rbind(p_value_breuschpagan,Homogenity_breuschpagan$p.value)
+}
+```
+
+```{r}
+head(p_value_bartlett,n=10)
+head(p_value_anova,n=10)
+head(p_value_breuschpagan,n=10)
+```
+
+```{r}
+data_simulation_A <- data.frame(p_value_anova,
+            p_value_breuschpagan)
+```
+
+```{r}
+hist(p_value_breuschpagan, col = "pink")
+hist(p_value_anova, col = "lightblue")
+sig<-ifelse(p_value_breuschpagan>0.05,"Homogen","Non-Homogen")
+table(sig)
+sig<-ifelse(p_value_anova<0.05,"Significant","Not-Significant")
+table(sig)
+```
+
+```{r}
+d_breuschpagan <- density(p_value_breuschpagan)
+plot(d_breuschpagan, main="Distribution of P-Value Breusch Pagan", ylim =c (0,19))
+polygon(d_breuschpagan, col="pink", border="red")
+
+```
+```{r}
+d_anova <- density(p_value_anova)
+plot(d_anova, main="Distribution of P-Value ANOVA")
+polygon(d_anova, col="lightblue", border="blue")
+
+```
