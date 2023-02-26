@@ -1,0 +1,164 @@
+---
+title: "Tugas 1 - Metode Penelitian Kualitatif"
+author: "Tahira Fulazzaky"
+date: "2023-02-21"
+output: html_document
+---
+
+# __Tugas Metode Penelitian Kuantitatif Spasial__
+
+
+```{r}
+# memanggil library
+library("sp", "gstat")
+library(raster)
+library(rgdal)
+library(spdep)
+```
+
+## Peta Tematik Pulau Jawa
+```{r}
+jawa<-readOGR(dsn="D:/4. Magister - Data Science IPB/Semester 2 - Predictive Analytics/2. MPK/Pertemuan 5/Praktikum Spatial 1/Map of Jawa (original)", layer="jawa")
+```
+```{r}
+jawa@data
+```
+```{r}
+plot(jawa)
+```
+```{r}
+plot(jawa)
+text(jawa,'NAMA_KAB',cex=0.3) #menambahkan nama wilayah pada peta
+```
+```{r}
+palette(rainbow(116))
+plot(jawa,col=jawa$KODE_KAB) #memberi warna pada peta
+text(jawa,'NAMA_KAB',cex=0.3) #menambahkan nama wilayah pada peta
+```
+```{r}
+data.kemiskinan<-read.csv("D:/4. Magister - Data Science IPB/Semester 2 - Predictive Analytics/2. MPK/Pertemuan 5/Praktikum Spatial 1/Map of Jawa (original)/kemiskinan.csv")
+head(data.kemiskinan)
+```
+
+
+## Matriks Pembobot Spasial
+## *Queen Contiguity*
+Membuat matriks pembobot spasial *queen contiguity* dari peta pulau Jawa. (dengan zero.policy=TRUE)
+
+```{r}
+library(spdep)
+```
+zero.policy = TRUE means we would incorporate the data with zero value.
+
+```{r}
+sf::sf_use_s2(FALSE)
+queenjawa.w <- poly2nb(jawa,queen = T)
+summary(queenjawa.w)
+```
+
+```{r}
+queenjawa.w1<-nb2mat(queenjawa.w,zero.policy = TRUE,style = "B") #untuk melihat bentuk matriks bobot
+View(queenjawa.w1)
+```
+
+
+```{r}
+plot(jawa, border="white",col='lightgreen')
+coords<-coordinates(jawa)
+plot(queenjawa.w, coords, add = TRUE, col = "red")
+```
+```{r}
+W <- queenjawa.w1
+W
+```
+
+```{r}
+# membangkitkan X1 dengan sebaran uniform
+set.seed(02024)
+X1 <- runif(116, min = 0, max =100)
+head(X1)
+```
+```{r}
+# membangkitkan e dengan sebaran normal
+set.seed(02024)
+e <- rnorm(116,mean=0,sd=1)
+head(e)
+```
+```{r}
+#menentukan nilai ρ
+p <- 0.7
+p
+```
+
+```{r}
+# membangkitkan formula y=〖(1- ρW)〗^(-1) 7.75 X_1+(1-ρW)^(-1) e dengan ρ=0.7.
+set.seed(02024)
+W=as.matrix(W)
+I=diag(116)
+y <- solve(I-(p*W))%*%(7.75*X1) +solve(I-(p*W))%*%e
+head(y)
+```
+
+## Weights Matrix analysis
+### Purpose of weights matrix analysis
+A spatial auto-correlation is the measurement of how similar or different the target is from the neibours. However, the definition of neighbours has a few possibilities. In this analysis, the methods called queen weights and rook weights are introduced to define surrouding polygons as neighbours. The names are derived from the ways queen and rook can move in the chessboard. These are actually quite similar but one difference is that rook weights do not count the surroundings that do not share the boundary as lines. That is, even if the surrounding polygons attach to the target polygon at corner, they will not be incorporated as neighbours.
+
+### Invers Distance Matrix
+
+```{r}
+#ekstrak koordinat
+D<-as.matrix(dist(coordinates(jawa),method = "euclidean"))
+head(D)
+```
+```{r}
+#invers distance weights
+w=1/(D)
+```
+
+```{r}
+# inverse weight matrix - row-normalized
+diag(w)<-0
+rtot<-rowSums(w, na.rm =T)
+w_std<-w/rtot
+View(w_std)
+rowSums(w_std, na.rm=T )
+```
+```{r}
+invers.w<-mat2listw(w, style="W") #untuk melihat matriks W
+summary(invers.w)
+```
+```{r}
+invers.w2<-mat2listw(w_std) #untuk melihat matriks W
+summary(invers.w2)
+
+```
+
+### rcode to implement weights matrix
+```{r}
+jawa.lw <- nb2listw(queenjawa.w, zero.policy = TRUE, style = "W")
+print.listw(jawa.lw, zero.policy = TRUE)
+```
+
+### Index Moran
+
+```{r}
+#Memberi warna peta berdasarkan formula data bangkitan y
+jawa$y<-y
+spplot(jawa,"y")
+```
+
+```{r}
+moran(jawa$y, invers.w, n=length(invers.w$neighbours), S0=Szero(invers.w))
+```
+
+```{r}
+moran.test(jawa$y, invers.w,alternative="two.sided")
+```
+
+
+
+Referensi
+https://rpubs.com/G_S_59/683792
+
+
+
